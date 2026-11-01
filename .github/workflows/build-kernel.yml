@@ -58,6 +58,9 @@ jobs:
           export KCFLAGS="-Wno-unknown-warning-option -Wno-error"
           export KCPPFLAGS="-Wno-unknown-warning-option -Wno-error"
           clang --version | head -1 || true
+          # Hard-disable the 32-bit compat vDSO block (clang-13 can't assemble it; harmless).
+          sed -i 's|ifeq ($(CONFIG_COMPAT_VDSO), y)|ifeq (vdso32_disabled,y)|' arch/arm64/Makefile
+          grep -n "vdso32_disabled\|CONFIG_COMPAT_VDSO" arch/arm64/Makefile | head
           echo ">>> DEFCONFIG=$DEFCONFIG"
           # 4.14 builds with clang + GNU binutils (no LLVM=1)
           # 32-bit compat vDSO: clang uses -no-integrated-as and finds the external arm
