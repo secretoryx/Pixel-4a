@@ -1,9 +1,8 @@
-name: Build Advanced NetHunter Kernel (bramble)
+name: Build Advanced NetHunter Kernel (sunfish)
 
-# Runs entirely on GitHub's cloud. Produces a flashable AnyKernel zip and
-# publishes it as a Release asset (direct download) AND a build artifact.
-# Auto-detects the defconfig; if the full feature build fails, it falls back
-# to the core config so you still get a working zip.
+# Pixel 4a (sunfish), kernel 4.14, Android 13.
+# Source: V3rB0se/Alynx-nethunter-sunfish (alynx_android-13.0.0_r0.17).
+# Produces a flashable AnyKernel zip, published as a Release (direct download).
 
 on:
   workflow_dispatch:
@@ -11,7 +10,7 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: write   # needed to publish a Release
+  contents: write
 
 jobs:
   build:
@@ -26,41 +25,40 @@ jobs:
           sudo apt-get install -y git bc bison flex libssl-dev libncurses-dev \
             python3 zip unzip wget cpio kmod ccache device-tree-compiler lz4 make
 
-      - name: Fetch Proton-Clang toolchain (single, ~1.5GB)
+      - name: Fetch Proton-Clang toolchain
         run: |
           git clone --depth=1 https://github.com/kdrag0n/proton-clang toolchain
           echo "TC=$PWD/toolchain/bin" >> "$GITHUB_ENV"
 
-      - name: Clone bramble/redbull kernel source (LineageOS, 4.19)
+      - name: Clone sunfish NetHunter kernel source (Alynx, 4.14, A13)
         run: |
-          git clone --depth=1 -b lineage-20 https://github.com/LineageOS/android_kernel_google_redbull kernel
-          echo "cloned: $(ls -d kernel && cat kernel/Makefile | grep -m3 -E '^VERSION|^PATCHLEVEL|^SUBLEVEL')"
+          git clone --depth=1 -b alynx_android-13.0.0_r0.17 https://github.com/V3rB0se/Alynx-nethunter-sunfish kernel
+          echo "cloned:"; ( cd kernel && head -3 Makefile )
 
       - name: Detect defconfig
         run: |
           cd kernel
           ls arch/arm64/configs/
           DC=""
-          for c in redbull_defconfig vendor/redbull_defconfig vendor/redbull-perf_defconfig \
-                   redbull-qgki_defconfig vendor/lineage_redbull_defconfig; do
+          for c in sunfish_defconfig vendor/sunfish-perf_defconfig vendor/sunfish_defconfig \
+                   b4s4_defconfig vendor/lineage_sunfish_defconfig vendor/alynx_defconfig; do
             [ -f "arch/arm64/configs/$c" ] && DC="$c" && break
           done
-          # else first defconfig mentioning redbull/bramble
-          [ -z "$DC" ] && DC=$(ls arch/arm64/configs/ | grep -iE 'redbull|bramble' | head -1)
+          [ -z "$DC" ] && DC=$(ls arch/arm64/configs/ | grep -iE 'sunfish|b4s4|alynx|nethunter' | head -1)
           [ -z "$DC" ] && DC=$(ls arch/arm64/configs/ | grep -i defconfig | head -1)
           echo "Using DEFCONFIG=$DC"
           echo "DEFCONFIG=$DC" >> "$GITHUB_ENV"
 
-      - name: Build (full feature set, fallback to core)
+      - name: Build (full -> core -> stock fallback)
         run: |
           exec > >(tee -a "$GITHUB_WORKSPACE/build.log") 2>&1
           cd kernel
           export PATH="$TC:$PATH"
           clang --version | head -1 || true
-          echo ">>> DEFCONFIG=$DEFCONFIG"; ls arch/arm64/configs/ | head -40
-          MK="make -j$(nproc) O=out ARCH=arm64 CC=clang LLVM=1 \
-              CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-              CLANG_TRIPLE=aarch64-linux-gnu-"
+          echo ">>> DEFCONFIG=$DEFCONFIG"
+          # 4.14 builds with clang + GNU binutils (no LLVM=1)
+          MK="make -j$(nproc) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
+              CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi-"
           build_with() {
             rm -rf out
             $MK "$DEFCONFIG"
@@ -68,38 +66,30 @@ jobs:
             $MK olddefconfig
             $MK || return 1
           }
-          echo "::group::Attempt 1 - FULL feature set"
-          if build_with ../config/nethunter_extra.config ../config/nethunter_extra_plus.config ../config/nethunter_extra_ultra.config; then
-            echo "FULL build OK"; echo "TIER=full" >> "$GITHUB_ENV"
-          else
-            echo "::endgroup::"; echo "::group::Attempt 2 - CORE config fallback"
-            if build_with ../config/nethunter_extra.config; then
-              echo "CORE build OK"; echo "TIER=core" >> "$GITHUB_ENV"
-            else
-              echo "::endgroup::"; echo "::group::Attempt 3 - stock defconfig"
-              rm -rf out; $MK "$DEFCONFIG"; $MK; echo "TIER=stock" >> "$GITHUB_ENV"
-            fi
-          fi
+          echo "::group::FULL"; if build_with ../config/nethunter_extra.config ../config/nethunter_extra_plus.config ../config/nethunter_extra_ultra.config; then
+            echo "FULL OK"; echo "TIER=full" >> "$GITHUB_ENV"
+          else echo "::endgroup::"; echo "::group::CORE"; if build_with ../config/nethunter_extra.config; then
+            echo "CORE OK"; echo "TIER=core" >> "$GITHUB_ENV"
+          else echo "::endgroup::"; echo "::group::STOCK"; rm -rf out; $MK "$DEFCONFIG"; $MK; echo "TIER=stock" >> "$GITHUB_ENV"
+          fi; fi
           echo "::endgroup::"
           ls -la out/arch/arm64/boot/ || true
 
-      - name: Package with AnyKernel3 (bramble)
+      - name: Package with AnyKernel3 (sunfish)
         run: |
           git clone --depth=1 https://github.com/osm0sis/AnyKernel3 ak3
           IMG="$(ls kernel/out/arch/arm64/boot/Image.lz4-dtb kernel/out/arch/arm64/boot/Image.gz-dtb kernel/out/arch/arm64/boot/Image-dtb kernel/out/arch/arm64/boot/Image.gz kernel/out/arch/arm64/boot/Image 2>/dev/null | head -1)"
-          echo "kernel image: $IMG"
-          test -n "$IMG"
-          cp "$IMG" ak3/
+          echo "kernel image: $IMG"; test -n "$IMG"; cp "$IMG" ak3/
           cd ak3
           cat > anykernel.sh <<'AK'
           properties() { '
-          kernel.string=Advanced NetHunter Pixel 4a 5G (bramble)
+          kernel.string=Advanced NetHunter Pixel 4a (sunfish)
           do.devicecheck=1
           do.modules=0
           do.systemless=0
           do.cleanup=1
           do.cleanuponabort=0
-          device.name1=bramble
+          device.name1=sunfish
           supported.versions=
           '; }
           block=/dev/block/bootdevice/by-name/boot;
@@ -109,41 +99,37 @@ jobs:
           split_boot;
           flash_boot;
           AK
-          zip -r9 "../Alynx-Advanced-Nethunter-${TIER:-build}.zip" . -x '.git*'
-          cd ..
-          ls -la Alynx-Advanced-Nethunter-*.zip
+          zip -r9 "../NetHunter-Sunfish-${TIER:-build}.zip" . -x '.git*'
+          cd ..; ls -la NetHunter-Sunfish-*.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Alynx-Advanced-Nethunter
-          path: Alynx-Advanced-Nethunter-*.zip
+          name: NetHunter-Sunfish
+          path: NetHunter-Sunfish-*.zip
           if-no-files-found: error
 
-      - name: Publish Release (direct download link)
+      - name: Publish Release (direct download)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: build-${{ github.run_number }}
-          name: Advanced NetHunter kernel (bramble) build ${{ github.run_number }}
-          files: Alynx-Advanced-Nethunter-*.zip
+          tag_name: sunfish-${{ github.run_number }}
+          name: Advanced NetHunter kernel (Pixel 4a / sunfish) build ${{ github.run_number }}
+          files: NetHunter-Sunfish-*.zip
           body: |
-            Flashable AnyKernel zip for Pixel 4a 5G (bramble).
+            Flashable AnyKernel zip for Pixel 4a (sunfish), Android 13.
             Tier built: ${{ env.TIER }}
             Flash via Franco Kernel Manager, then install the FULL Kali chroot.
 
-      - name: Publish build ERROR LOG on failure (so it can be read)
+      - name: Publish ERROR LOG on failure
         if: failure()
         run: |
-          { echo "===== DEFCONFIG: ${DEFCONFIG:-unknown} ====="; \
-            echo "===== last 700 lines of build.log ====="; \
-            tail -n 700 "$GITHUB_WORKSPACE/build.log" 2>/dev/null; } > "$GITHUB_WORKSPACE/build-error.txt" || echo "no log captured" > "$GITHUB_WORKSPACE/build-error.txt"
-          wc -l "$GITHUB_WORKSPACE/build-error.txt"
+          { echo "DEFCONFIG=${DEFCONFIG:-unknown}"; echo "=== tail build.log ==="; tail -n 700 "$GITHUB_WORKSPACE/build.log" 2>/dev/null; } > "$GITHUB_WORKSPACE/build-error.txt" || echo none > "$GITHUB_WORKSPACE/build-error.txt"
 
-      - name: Release the error log
+      - name: Release error log
         if: failure()
         uses: softprops/action-gh-release@v2
         with:
           tag_name: errorlog-${{ github.run_number }}
           name: BUILD ERROR LOG ${{ github.run_number }}
           files: build-error.txt
-          body: Compile error log for debugging.
+          body: sunfish build error log
