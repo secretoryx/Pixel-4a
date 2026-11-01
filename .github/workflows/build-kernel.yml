@@ -32,8 +32,9 @@ jobs:
           echo "TC=$PWD/toolchain/bin" >> "$GITHUB_ENV"
 
       - name: Clone bramble/redbull kernel source (LineageOS, 4.19)
-        run: git clone --depth=1 -b lineage-20 \
-             https://github.com/LineageOS/android_kernel_google_redbull kernel
+        run: |
+          git clone --depth=1 -b lineage-20 https://github.com/LineageOS/android_kernel_google_redbull kernel
+          echo "cloned: $(ls -d kernel && cat kernel/Makefile | grep -m3 -E '^VERSION|^PATCHLEVEL|^SUBLEVEL')"
 
       - name: Detect defconfig
         run: |
