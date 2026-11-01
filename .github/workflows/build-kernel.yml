@@ -53,8 +53,11 @@ jobs:
 
       - name: Build (full feature set, fallback to core)
         run: |
+          exec > >(tee -a "$GITHUB_WORKSPACE/build.log") 2>&1
           cd kernel
           export PATH="$TC:$PATH"
+          clang --version | head -1 || true
+          echo ">>> DEFCONFIG=$DEFCONFIG"; ls arch/arm64/configs/ | head -40
           MK="make -j$(nproc) O=out ARCH=arm64 CC=clang LLVM=1 \
               CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
               CLANG_TRIPLE=aarch64-linux-gnu-"
@@ -127,3 +130,20 @@ jobs:
             Flashable AnyKernel zip for Pixel 4a 5G (bramble).
             Tier built: ${{ env.TIER }}
             Flash via Franco Kernel Manager, then install the FULL Kali chroot.
+
+      - name: Publish build ERROR LOG on failure (so it can be read)
+        if: failure()
+        run: |
+          { echo "===== DEFCONFIG: ${DEFCONFIG:-unknown} ====="; \
+            echo "===== last 700 lines of build.log ====="; \
+            tail -n 700 "$GITHUB_WORKSPACE/build.log" 2>/dev/null; } > "$GITHUB_WORKSPACE/build-error.txt" || echo "no log captured" > "$GITHUB_WORKSPACE/build-error.txt"
+          wc -l "$GITHUB_WORKSPACE/build-error.txt"
+
+      - name: Release the error log
+        if: failure()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: errorlog-${{ github.run_number }}
+          name: BUILD ERROR LOG ${{ github.run_number }}
+          files: build-error.txt
+          body: Compile error log for debugging.
