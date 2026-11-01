@@ -133,7 +133,14 @@ jobs:
       - name: Publish ERROR LOG on failure
         if: failure()
         run: |
-          { echo "DEFCONFIG=${DEFCONFIG:-unknown}"; echo "=== tail build.log ==="; tail -n 700 "$GITHUB_WORKSPACE/build.log" 2>/dev/null; } > "$GITHUB_WORKSPACE/build-error.txt" || echo none > "$GITHUB_WORKSPACE/build-error.txt"
+          cp "$GITHUB_WORKSPACE/build.log" "$GITHUB_WORKSPACE/build-full.log" 2>/dev/null || true
+          {
+            echo "DEFCONFIG=${DEFCONFIG:-unknown}"
+            echo "=== real compile errors (full log) ==="
+            grep -nE "error:|Error [0-9]|undefined reference|No rule to make|ld\.lld:|multiple definition" "$GITHUB_WORKSPACE/build.log" 2>/dev/null | grep -viE "note:|warning:" | tail -150
+            echo "=== last 150 lines ==="
+            tail -n 150 "$GITHUB_WORKSPACE/build.log" 2>/dev/null
+          } > "$GITHUB_WORKSPACE/build-error.txt" || echo none > "$GITHUB_WORKSPACE/build-error.txt"
 
       - name: Release error log
         if: failure()
@@ -141,5 +148,7 @@ jobs:
         with:
           tag_name: errorlog-${{ github.run_number }}
           name: BUILD ERROR LOG ${{ github.run_number }}
-          files: build-error.txt
-          body: sunfish build error log
+          files: |
+            build-error.txt
+            build-full.log
+          body: sunfish build error log (full)
