@@ -54,6 +54,9 @@ jobs:
           exec > >(tee -a "$GITHUB_WORKSPACE/build.log") 2>&1
           cd kernel
           export PATH="$TC:$PATH"
+          # tolerate flag/version mismatch between this clang and a 4.14 tree
+          export KCFLAGS="-Wno-unknown-warning-option -Wno-error"
+          export KCPPFLAGS="-Wno-unknown-warning-option -Wno-error"
           clang --version | head -1 || true
           echo ">>> DEFCONFIG=$DEFCONFIG"
           # 4.14 builds with clang + GNU binutils (no LLVM=1)
