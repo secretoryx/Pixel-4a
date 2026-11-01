@@ -60,8 +60,10 @@ jobs:
           clang --version | head -1 || true
           echo ">>> DEFCONFIG=$DEFCONFIG"
           # 4.14 builds with clang + GNU binutils (no LLVM=1)
+          # Build the 32-bit compat vDSO with GNU arm gcc (clang's IAS can't assemble it)
           MK="make -j$(nproc) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
-              CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi-"
+              CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
+              CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CC_COMPAT=arm-linux-gnueabi-gcc"
           build_with() {
             rm -rf out
             $MK "$DEFCONFIG"
