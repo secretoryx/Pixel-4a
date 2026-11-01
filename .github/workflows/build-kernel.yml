@@ -1,0 +1,103 @@
+name: Build Advanced NetHunter Kernel (bramble)
+
+# Builds the Pixel 4a 5G (bramble) Alynx-style NetHunter kernel on a free GitHub
+# Ubuntu runner and uploads a flashable AnyKernel zip as an artifact.
+# Run it from the repo's "Actions" tab -> this workflow -> "Run workflow".
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout this repo (configs)
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git bc bison flex libssl-dev libncurses-dev \
+            gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi python3 python3-pip \
+            zip unzip wget cpio kmod ccache device-tree-compiler lz4
+
+      - name: Fetch AOSP clang toolchain
+        run: |
+          mkdir -p "$HOME/clang" && cd "$HOME/clang"
+          git clone --depth=1 \
+            https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 aosp
+          CLANG="$(ls -d "$PWD"/aosp/clang-r4371* 2>/dev/null | head -1)"
+          [ -z "$CLANG" ] && CLANG="$(ls -d "$PWD"/aosp/clang-r* | tail -1)"
+          echo "CLANG=$CLANG" >> "$GITHUB_ENV"
+          echo "Using clang: $CLANG"
+
+      - name: Clone bramble/redbull kernel source (LineageOS, 4.19)
+        run: git clone --depth=1 -b lineage-20 \
+             https://github.com/LineageOS/android_kernel_google_redbull kernel
+
+      - name: Show available defconfigs (so we pick the right one)
+        run: ls kernel/arch/arm64/configs/ | sort
+
+      - name: Add out-of-tree RTL8812AU injector (optional, may need wiring)
+        run: |
+          cd kernel/drivers/net/wireless
+          git clone --depth=1 -b v5.6.4.2 https://github.com/aircrack-ng/rtl8812au rtl8812au || \
+          git clone --depth=1 https://github.com/aircrack-ng/rtl8812au rtl8812au || true
+
+      - name: Merge the locked NetHunter config fragments
+        run: |
+          cd kernel
+          # EDIT defconfig name here if the step above shows a different one:
+          DEFCONFIG=redbull_defconfig
+          ARCH=arm64 scripts/kconfig/merge_config.sh \
+            "arch/arm64/configs/$DEFCONFIG" \
+            ../config/nethunter_extra.config \
+            ../config/nethunter_extra_plus.config \
+            ../config/nethunter_extra_ultra.config
+
+      - name: Build kernel
+        run: |
+          cd kernel
+          export PATH="$CLANG/bin:$PATH"
+          DEFCONFIG=redbull_defconfig
+          make -j"$(nproc)" O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 \
+            CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- "$DEFCONFIG"
+          make -j"$(nproc)" O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 \
+            CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+
+      - name: Package with AnyKernel3 (bramble)
+        run: |
+          git clone --depth=1 https://github.com/osm0sis/AnyKernel3 ak3
+          IMG="$(ls kernel/out/arch/arm64/boot/Image.lz4-dtb kernel/out/arch/arm64/boot/Image.gz-dtb kernel/out/arch/arm64/boot/Image 2>/dev/null | head -1)"
+          echo "kernel image: $IMG"
+          cp "$IMG" ak3/
+          cd ak3
+          # minimal bramble anykernel.sh
+          cat > anykernel.sh <<'AK'
+          properties() { '
+          kernel.string=Advanced NetHunter Pixel 4a 5G (bramble)
+          do.devicecheck=1
+          do.modules=0
+          do.systemless=0
+          do.cleanup=1
+          do.cleanuponabort=0
+          device.name1=bramble
+          supported.versions=
+          '; }
+          block=/dev/block/bootdevice/by-name/boot;
+          is_slot_device=1;
+          ramdisk_compression=auto;
+          . tools/ak3-core.sh;
+          split_boot;
+          flash_boot;
+          AK
+          zip -r9 ../Alynx-Advanced-Nethunter.zip . -x '.git*'
+
+      - name: Upload flashable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Alynx-Advanced-Nethunter
+          path: Alynx-Advanced-Nethunter.zip
+          if-no-files-found: error
