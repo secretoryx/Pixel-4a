@@ -61,7 +61,9 @@ jobs:
 
       - name: Build (full -> core -> stock fallback)
         run: |
-          exec > >(tee -a "$GITHUB_WORKSPACE/build.log") 2>&1
+          # Cap the build log: the Qualcomm wifi driver emits GBs of warning text; writing it
+          # all to disk fills the runner and crashes it. Keep only the last 40k lines (in memory).
+          exec > >(tail -n 40000 > "$GITHUB_WORKSPACE/build.log") 2>&1
           cd kernel
           export PATH="$TC:$PATH"
           # tolerate flag/version mismatch between this clang and a 4.14 tree
