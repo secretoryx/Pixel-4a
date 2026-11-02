@@ -69,11 +69,11 @@ jobs:
           # assembler via `which $(CROSS_COMPILE_ARM32)ld`. Use an ABSOLUTE path to Ubuntu's
           # GNU arm toolchain so it doesn't grab Proton-Clang's broken one off PATH.
           which arm-linux-gnueabi-as arm-linux-gnueabi-ld /usr/bin/arm-linux-gnueabi-as || true
-          # Use the system GNU bfd linker: Proton-Clang's bundled ld.gold has a hardcoded
-          # /root/build path that isn't readable on the runner (Permission denied).
+          # Link with LLVM lld (ships in Proton-Clang): Proton's ld.gold has a broken
+          # hardcoded /root/build path, and the GNU bfd cross-ld isn't present on the runner.
           MK="make -j$(nproc) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
               CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabi- \
-              LD=/usr/bin/aarch64-linux-gnu-ld.bfd KBUILD_COMPILER_STRING=ProtonClang13"
+              LD=ld.lld KBUILD_COMPILER_STRING=ProtonClang13"
           build_with() {
             rm -rf out
             $MK "$DEFCONFIG"
