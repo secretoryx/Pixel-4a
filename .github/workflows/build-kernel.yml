@@ -25,6 +25,16 @@ jobs:
           sudo apt-get install -y git bc bison flex libssl-dev libncurses-dev \
             python3 zip unzip wget cpio kmod ccache device-tree-compiler lz4 make
 
+      - name: Free disk space + add swap (full-feature build is large)
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
+                      /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift || true
+          sudo apt-get clean
+          sudo fallocate -l 10G /swapfile && sudo chmod 600 /swapfile && \
+            sudo mkswap /swapfile && sudo swapon /swapfile || true
+          echo "=== disk ==="; df -h /
+          echo "=== mem ==="; free -h
+
       - name: Fetch Proton-Clang toolchain
         run: |
           git clone --depth=1 https://github.com/kdrag0n/proton-clang toolchain
