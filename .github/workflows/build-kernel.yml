@@ -25,15 +25,24 @@ jobs:
           sudo apt-get install -y git bc bison flex libssl-dev libncurses-dev \
             python3 zip unzip wget cpio kmod ccache device-tree-compiler lz4 make
 
-      - name: Free disk space + add swap (full-feature build is large)
+      - name: Free disk space + add big swap on /mnt
         run: |
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android \
-                      /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift || true
+                      /opt/hostedtoolcache /usr/local/share/boost /usr/share/swift \
+                      /usr/lib/jvm /usr/local/.ghcup /usr/local/graalvm \
+                      "$AGENT_TOOLSDIRECTORY" || true
+          sudo docker image prune -af || true
           sudo apt-get clean
-          sudo fallocate -l 10G /swapfile && sudo chmod 600 /swapfile && \
-            sudo mkswap /swapfile && sudo swapon /swapfile || true
-          echo "=== disk ==="; df -h /
-          echo "=== mem ==="; free -h
+          # Put swap on /mnt (the big ~70 GB ephemeral disk), NOT on / (small — the build tree,
+          # toolchain and out/ all live on / and must not compete with swap for space).
+          # 24 GB swap + 7 GB RAM = ~31 GB: enough to absorb even a heavy single-threaded lld link.
+          sudo swapoff -a || true
+          sudo rm -f /swapfile /mnt/swapfile || true
+          sudo fallocate -l 24G /mnt/swapfile && sudo chmod 600 /mnt/swapfile && \
+            sudo mkswap /mnt/swapfile && sudo swapon /mnt/swapfile || true
+          echo "=== swap ==="; swapon --show; free -h
+          echo "=== disk / ==="; df -h /
+          echo "=== disk /mnt ==="; df -h /mnt
 
       - name: Fetch Proton-Clang toolchain
         run: |
@@ -61,18 +70,30 @@ jobs:
 
       - name: Build (full -> core -> stock fallback)
         run: |
-          # Cap the build log: the Qualcomm wifi driver emits GBs of warning text; writing it
-          # all to disk fills the runner and crashes it. Keep only the last 40k lines (in memory).
+          # Bulk compiler output -> capped file (the qcacld driver emits GBs of warnings; writing
+          # it all to disk would fill /). But keep a live heartbeat on the REAL console via fd 3:
+          # GitHub streams and persists console output server-side even when the runner is
+          # OOM-killed, so if this dies again we finally see mem/swap/disk at the moment of death.
+          exec 3>&1
           exec > >(tail -n 40000 > "$GITHUB_WORKSPACE/build.log") 2>&1
           cd kernel
           export PATH="$TC:$PATH"
-          # Peak-RAM control: every prior run died at ~80 min with the step "lost" (not a clean
-          # failure) = the runner was OOM-killed. 4 parallel clang jobs on the huge qcacld wifi
-          # driver blow past the runner's 7 GB. Cap parallelism to keep peak memory in budget;
-          # the 6-hour job limit leaves plenty of room for the slower build.
-          JOBS=2
-          # Background heartbeat so a future hang/OOM is visible in the (capped) log.
-          ( while true; do echo "[hb $(date +%T)] mem:$(free -m|awk '/Mem:/{print $3"/"$2"MB"}') disk:$(df -m / |awk 'NR==2{print $3"/"$2"MB"}')"; sleep 60; done ) &
+          # Big swap (24 GB on /mnt) now absorbs peak RAM, so run at full parallelism for speed.
+          JOBS=$(nproc)
+          # Heartbeat -> fd 3 (persisted console). Shows used/total RAM, used/total swap, and
+          # free space on / and on the build workspace, every 45s. Each value on its own line so
+          # the awk quoting stays simple and correct.
+          hb() {
+            while true; do
+              M=$(free -m | awk '/Mem:/{print $3"/"$2"M"}')
+              S=$(free -m | awk '/Swap:/{print $3"/"$2"M"}')
+              R=$(df -m / | awk 'NR==2{print $4"M"}')
+              W=$(df -m "$GITHUB_WORKSPACE" | awk 'NR==2{print $4"M"}')
+              echo "[hb $(date +%T)] mem:$M swap:$S root_free:$R work_free:$W" >&3
+              sleep 45
+            done
+          }
+          hb &
           HB=$!; trap 'kill $HB 2>/dev/null' EXIT
           # tolerate flag/version mismatch between this clang and a 4.14 tree
           export KCFLAGS="-Wno-unknown-warning-option -Wno-error"
