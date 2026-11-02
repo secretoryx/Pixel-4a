@@ -61,10 +61,8 @@ jobs:
           # Hard-disable the 32-bit compat vDSO block (clang-13 can't assemble it; harmless).
           sed -i 's|ifeq ($(CONFIG_COMPAT_VDSO), y)|ifeq (vdso32_disabled,y)|' arch/arm64/Makefile
           grep -n "vdso32_disabled\|CONFIG_COMPAT_VDSO" arch/arm64/Makefile | head
-          # Fix mkcompile_h bug: `echo '...%s...'` -> printf, else LINUX_COMPILER breaks init/version.c
-          sed -i '/#define LINUX_COMPILER "%s"/ s/echo /printf /' scripts/mkcompile_h
-          grep -n 'LINUX_COMPILER "%s"' scripts/mkcompile_h || true
-          export KBUILD_COMPILER_STRING="$(clang --version | head -1)"
+          # (mkcompile_h's LINUX_COMPILER is fixed below by passing KBUILD_COMPILER_STRING
+          #  as a make command-line var, which make force-exports to mkcompile_h.)
           echo ">>> DEFCONFIG=$DEFCONFIG"
           # 4.14 builds with clang + GNU binutils (no LLVM=1)
           # 32-bit compat vDSO: clang uses -no-integrated-as and finds the external arm
@@ -72,7 +70,8 @@ jobs:
           # GNU arm toolchain so it doesn't grab Proton-Clang's broken one off PATH.
           which arm-linux-gnueabi-as arm-linux-gnueabi-ld /usr/bin/arm-linux-gnueabi-as || true
           MK="make -j$(nproc) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
-              CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabi-"
+              CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabi- \
+              KBUILD_COMPILER_STRING=ProtonClang13"
           build_with() {
             rm -rf out
             $MK "$DEFCONFIG"
