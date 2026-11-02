@@ -66,6 +66,14 @@ jobs:
           exec > >(tail -n 40000 > "$GITHUB_WORKSPACE/build.log") 2>&1
           cd kernel
           export PATH="$TC:$PATH"
+          # Peak-RAM control: every prior run died at ~80 min with the step "lost" (not a clean
+          # failure) = the runner was OOM-killed. 4 parallel clang jobs on the huge qcacld wifi
+          # driver blow past the runner's 7 GB. Cap parallelism to keep peak memory in budget;
+          # the 6-hour job limit leaves plenty of room for the slower build.
+          JOBS=2
+          # Background heartbeat so a future hang/OOM is visible in the (capped) log.
+          ( while true; do echo "[hb $(date +%T)] mem:$(free -m|awk '/Mem:/{print $3"/"$2"MB"}') disk:$(df -m / |awk 'NR==2{print $3"/"$2"MB"}')"; sleep 60; done ) &
+          HB=$!; trap 'kill $HB 2>/dev/null' EXIT
           # tolerate flag/version mismatch between this clang and a 4.14 tree
           export KCFLAGS="-Wno-unknown-warning-option -Wno-error"
           export KCPPFLAGS="-Wno-unknown-warning-option -Wno-error"
@@ -83,7 +91,7 @@ jobs:
           which arm-linux-gnueabi-as arm-linux-gnueabi-ld /usr/bin/arm-linux-gnueabi-as || true
           # Link with LLVM lld (ships in Proton-Clang): Proton's ld.gold has a broken
           # hardcoded /root/build path, and the GNU bfd cross-ld isn't present on the runner.
-          MK="make -j$(nproc) O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
+          MK="make -j${JOBS} O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
               CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabi- \
               LD=ld.lld KBUILD_COMPILER_STRING=ProtonClang13"
           build_with() {
