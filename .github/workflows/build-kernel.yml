@@ -141,12 +141,13 @@ jobs:
           git clone --depth=1 https://github.com/osm0sis/AnyKernel3 ak3
           BOOT=kernel/out/arch/arm64/boot
           echo "=== full boot dir listing ==="; ls -la "$BOOT" || true
-          # Pick the kernel image: prefer appended-dtb / compressed, but fall back to ANY Image*.
+          # Pick the kernel image. NOTE: steps run with `set -e`, so a bare `[ -f x ] && ...`
+          # that is false would ABORT the step — use if-blocks, which errexit never trips on.
           IMG=""
           for cand in Image.gz-dtb Image.lz4-dtb Image-dtb Image.gz Image.lz4 Image; do
-            [ -f "$BOOT/$cand" ] && IMG="$BOOT/$cand" && break
+            if [ -f "$BOOT/$cand" ]; then IMG="$BOOT/$cand"; break; fi
           done
-          [ -z "$IMG" ] && IMG="$(ls "$BOOT"/Image* 2>/dev/null | head -1)"
+          if [ -z "$IMG" ]; then IMG="$(ls "$BOOT"/Image* 2>/dev/null | head -1)"; fi
           echo "selected kernel image: $IMG"
           if [ -z "$IMG" ] || [ ! -f "$IMG" ]; then
             echo "!! no kernel Image produced — build output missing"; ls -laR "$BOOT" || true; exit 1
