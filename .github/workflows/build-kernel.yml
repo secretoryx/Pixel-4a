@@ -106,9 +106,14 @@ jobs:
           which arm-linux-gnueabi-as arm-linux-gnueabi-ld /usr/bin/arm-linux-gnueabi-as || true
           # Link with LLVM lld (ships in Proton-Clang): Proton's ld.gold has a broken
           # hardcoded /root/build path, and the GNU bfd cross-ld isn't present on the runner.
+          # Use LLVM binutils (nm/objcopy/objdump/strip/ar) to MATCH the ld.lld-linked vmlinux.
+          # GNU binutils' aarch64-linux-gnu-objcopy/nm cannot parse lld's modern .relr.dyn (RELR)
+          # relocation section ("unknown type [0x13]"), so the final OBJCOPY -> boot Image fails.
+          # Proton-Clang ships llvm-objcopy/llvm-nm/etc, resolved via PATH ($TC).
           MK="make -j${JOBS} O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
               CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabi- \
-              LD=ld.lld KBUILD_COMPILER_STRING=ProtonClang13"
+              LD=ld.lld NM=llvm-nm AR=llvm-ar OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump \
+              STRIP=llvm-strip KBUILD_COMPILER_STRING=ProtonClang13"
           # Link fix: drv2624.c defines `inline void hap_ignore_next_request()` (non-static inline),
           # which may NOT emit an external symbol under clang, so the built-in fpc1020 fingerprint
           # driver fails to link against it (ld.lld: undefined symbol: hap_ignore_next_request).
