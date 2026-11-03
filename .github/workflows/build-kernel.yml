@@ -78,7 +78,11 @@ jobs:
           # incrementally, so the log SURVIVES a failed/killed step (the old `tail -n N > file`
           # buffered everything in RAM and wrote nothing if the process was killed -> empty logs).
           # /mnt has ~70 GB, so the GBs of qcacld warnings can't fill the small / partition.
-          BUILD_LOG=/mnt/build.log
+          # /mnt is root-owned, so make a world-writable subdir there for the log (big disk).
+          # Fall back to the workspace (on /) if /mnt can't be used.
+          sudo mkdir -p /mnt/bl && sudo chmod 1777 /mnt/bl || true
+          if ( : > /mnt/bl/build.log ) 2>/dev/null; then BUILD_LOG=/mnt/bl/build.log; else BUILD_LOG="$GITHUB_WORKSPACE/build.log"; fi
+          echo "logging full build output to $BUILD_LOG"
           echo "BUILD_LOG=$BUILD_LOG" >> "$GITHUB_ENV"
           exec > "$BUILD_LOG" 2>&1
           cd kernel
