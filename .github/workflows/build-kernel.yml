@@ -58,12 +58,16 @@ jobs:
         run: |
           cd kernel
           ls arch/arm64/configs/
+          # nethunter_defconfig FIRST: it is the complete, maintainer-tested config the flashed
+          # Alynx kernel was built from, and it ALREADY has MAC80211 + every external USB Wi-Fi
+          # injection driver (ath9k_htc, carl9170, rt2800usb, rtl8187, mt7601u, zd1211rw, ...).
+          # No fragment merge needed. sunfish_defconfig is only a stripped-down fallback.
           DC=""
-          for c in sunfish_defconfig vendor/sunfish-perf_defconfig vendor/sunfish_defconfig \
-                   b4s4_defconfig vendor/lineage_sunfish_defconfig vendor/alynx_defconfig; do
+          for c in nethunter_defconfig sunfish_defconfig vendor/sunfish-perf_defconfig \
+                   vendor/sunfish_defconfig b4s4_defconfig vendor/lineage_sunfish_defconfig; do
             [ -f "arch/arm64/configs/$c" ] && DC="$c" && break
           done
-          [ -z "$DC" ] && DC=$(ls arch/arm64/configs/ | grep -iE 'sunfish|b4s4|alynx|nethunter' | head -1)
+          [ -z "$DC" ] && DC=$(ls arch/arm64/configs/ | grep -iE 'nethunter|sunfish|b4s4|alynx' | head -1)
           [ -z "$DC" ] && DC=$(ls arch/arm64/configs/ | grep -i defconfig | head -1)
           echo "Using DEFCONFIG=$DC"
           echo "DEFCONFIG=$DC" >> "$GITHUB_ENV"
@@ -115,18 +119,19 @@ jobs:
           MK="make -j${JOBS} O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
               CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabi- \
               LD=ld.lld KBUILD_COMPILER_STRING=ProtonClang13"
-          build_with() {
+          # Build the chosen defconfig PLAIN. nethunter_defconfig already contains all injection
+          # features, so no merge_config step (that merge was the main source of fragility).
+          build_plain() {
             rm -rf out
-            $MK "$DEFCONFIG"
-            ARCH=arm64 scripts/kconfig/merge_config.sh -m -O out out/.config "$@"
-            $MK olddefconfig
+            $MK "$1" || return 1
             $MK || return 1
           }
-          # Core feature set only (injection + CAN + key gadgets) = smaller kernel that
-          # the free runner can actually finish. Falls back to stock if even that fails.
-          echo "::group::CORE"; if build_with ../config/nethunter_extra.config; then
-            echo "CORE OK"; echo "TIER=core" >> "$GITHUB_ENV"
-          else echo "::endgroup::"; echo "::group::STOCK"; rm -rf out; $MK "$DEFCONFIG"; $MK; echo "TIER=stock" >> "$GITHUB_ENV"
+          echo "::group::BUILD $DEFCONFIG"
+          if build_plain "$DEFCONFIG"; then
+            echo "BUILD OK ($DEFCONFIG)"; echo "TIER=$DEFCONFIG" >> "$GITHUB_ENV"
+          elif [ "$DEFCONFIG" != "sunfish_defconfig" ] && [ -f arch/arm64/configs/sunfish_defconfig ]; then
+            echo "::endgroup::"; echo "::group::FALLBACK sunfish_defconfig"
+            build_plain sunfish_defconfig && echo "TIER=sunfish-stock" >> "$GITHUB_ENV"
           fi
           echo "::endgroup::"
           ls -la out/arch/arm64/boot/ || true
@@ -179,21 +184,38 @@ jobs:
       - name: Publish ERROR LOG on failure
         if: failure()
         run: |
+          # Always produce both files (even empty) so neither the artifact nor the release
+          # upload can fail on a missing file.
           cp "$GITHUB_WORKSPACE/build.log" "$GITHUB_WORKSPACE/build-full.log" 2>/dev/null || true
+          : > "$GITHUB_WORKSPACE/build-full.log.keep"; [ -f "$GITHUB_WORKSPACE/build-full.log" ] || : > "$GITHUB_WORKSPACE/build-full.log"
           {
             echo "DEFCONFIG=${DEFCONFIG:-unknown}"
             echo "=== real compile errors (full log) ==="
-            grep -nE "error:|Error [0-9]|undefined reference|No rule to make|ld\.lld:|multiple definition" "$GITHUB_WORKSPACE/build.log" 2>/dev/null | grep -viE "note:|warning:" | tail -150
-            echo "=== last 150 lines ==="
-            tail -n 150 "$GITHUB_WORKSPACE/build.log" 2>/dev/null
+            grep -nE "error:|Error [0-9]|undefined reference|No rule to make|ld\.lld:|multiple definition|recipe for target" "$GITHUB_WORKSPACE/build.log" 2>/dev/null | grep -viE "note:|warning:" | tail -200
+            echo "=== last 200 lines ==="
+            tail -n 200 "$GITHUB_WORKSPACE/build.log" 2>/dev/null
           } > "$GITHUB_WORKSPACE/build-error.txt" || echo none > "$GITHUB_WORKSPACE/build-error.txt"
+          echo "----- error head (also on console) -----"; head -60 "$GITHUB_WORKSPACE/build-error.txt"
+
+      - name: Upload error log as artifact
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-error-log
+          path: |
+            build-error.txt
+            build-full.log
+          if-no-files-found: ignore
 
       - name: Release error log
         if: failure()
+        continue-on-error: true
         uses: softprops/action-gh-release@v2
         with:
           tag_name: errorlog-${{ github.run_number }}
           name: BUILD ERROR LOG ${{ github.run_number }}
+          fail_on_unmatched_files: false
+          make_latest: false
           files: |
             build-error.txt
             build-full.log
