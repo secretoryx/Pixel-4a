@@ -119,22 +119,27 @@ jobs:
           MK="make -j${JOBS} O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- \
               CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=/usr/bin/arm-linux-gnueabi- \
               LD=ld.lld KBUILD_COMPILER_STRING=ProtonClang13"
-          # Build the chosen defconfig PLAIN. nethunter_defconfig already contains all injection
-          # features, so no merge_config step (that merge was the main source of fragility).
-          build_plain() {
-            rm -rf out
-            $MK "$1" || return 1
-            $MK || return 1
-          }
+          # Link fix: drv2624.c defines `inline void hap_ignore_next_request()` (non-static inline),
+          # which may NOT emit an external symbol under clang, so the built-in fpc1020 fingerprint
+          # driver fails to link against it (ld.lld: undefined symbol: hap_ignore_next_request).
+          # Drop the `inline` so the definition always has external linkage.
+          sed -i 's/^[[:space:]]*inline void hap_ignore_next_request/void hap_ignore_next_request/' \
+            drivers/input/misc/drv2624.c || true
+          grep -n "hap_ignore_next_request" drivers/input/misc/drv2624.c | head
+          # Build ONLY nethunter_defconfig (the complete, correct config). No sunfish fallback:
+          # sunfish has DRV2624=m, which can NEVER resolve the above symbol, and its `rm -rf out`
+          # would also destroy the real build output.
           echo "::group::BUILD $DEFCONFIG"
-          if build_plain "$DEFCONFIG"; then
-            echo "BUILD OK ($DEFCONFIG)"; echo "TIER=$DEFCONFIG" >> "$GITHUB_ENV"
-          elif [ "$DEFCONFIG" != "sunfish_defconfig" ] && [ -f arch/arm64/configs/sunfish_defconfig ]; then
-            echo "::endgroup::"; echo "::group::FALLBACK sunfish_defconfig"
-            build_plain sunfish_defconfig && echo "TIER=sunfish-stock" >> "$GITHUB_ENV"
-          fi
+          rm -rf out
+          $MK "$DEFCONFIG"
+          $MK
           echo "::endgroup::"
-          ls -la out/arch/arm64/boot/ || true
+          echo "TIER=$DEFCONFIG" >> "$GITHUB_ENV"
+          echo "=== boot dir ==="; ls -la out/arch/arm64/boot/ || true
+          # Hard assert: a kernel image must exist, else fail the step cleanly (so Package is skipped).
+          if ! ls out/arch/arm64/boot/Image* >/dev/null 2>&1; then
+            echo "!! BUILD PRODUCED NO IMAGE"; exit 1
+          fi
 
       - name: Package with AnyKernel3 (sunfish)
         run: |
@@ -249,6 +254,8 @@ jobs:
           mkdir -p /tmp/lg
           cp pkg.log       /tmp/lg/pkg-${{ github.run_number }}.log   2>/dev/null || echo "no pkg.log" > /tmp/lg/pkg-${{ github.run_number }}.log
           tail -n 300 build.log > /tmp/lg/build-tail-${{ github.run_number }}.log 2>/dev/null || true
+          grep -nE "error:|ld\.lld: error|undefined symbol|Error [0-9]|recipe for target|No rule to make" build.log 2>/dev/null \
+            | grep -viE "warning:|note:" | tail -120 > /tmp/lg/errors-${{ github.run_number }}.log 2>/dev/null || true
           git config user.email actions@github.com
           git config user.name ci
           git checkout --orphan ci-logs
