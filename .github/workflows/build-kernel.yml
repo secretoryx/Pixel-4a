@@ -74,31 +74,17 @@ jobs:
 
       - name: Build (full -> core -> stock fallback)
         run: |
-          # Bulk compiler output -> capped file (the qcacld driver emits GBs of warnings; writing
-          # it all to disk would fill /). But keep a live heartbeat on the REAL console via fd 3:
-          # GitHub streams and persists console output server-side even when the runner is
-          # OOM-killed, so if this dies again we finally see mem/swap/disk at the moment of death.
-          exec 3>&1
-          exec > >(tail -n 40000 > "$GITHUB_WORKSPACE/build.log") 2>&1
+          # Log DIRECTLY to a file on the big /mnt disk. A direct `> file` redirect writes
+          # incrementally, so the log SURVIVES a failed/killed step (the old `tail -n N > file`
+          # buffered everything in RAM and wrote nothing if the process was killed -> empty logs).
+          # /mnt has ~70 GB, so the GBs of qcacld warnings can't fill the small / partition.
+          BUILD_LOG=/mnt/build.log
+          echo "BUILD_LOG=$BUILD_LOG" >> "$GITHUB_ENV"
+          exec > "$BUILD_LOG" 2>&1
           cd kernel
           export PATH="$TC:$PATH"
           # Big swap (24 GB on /mnt) now absorbs peak RAM, so run at full parallelism for speed.
           JOBS=$(nproc)
-          # Heartbeat -> fd 3 (persisted console). Shows used/total RAM, used/total swap, and
-          # free space on / and on the build workspace, every 45s. Each value on its own line so
-          # the awk quoting stays simple and correct.
-          hb() {
-            while true; do
-              M=$(free -m | awk '/Mem:/{print $3"/"$2"M"}')
-              S=$(free -m | awk '/Swap:/{print $3"/"$2"M"}')
-              R=$(df -m / | awk 'NR==2{print $4"M"}')
-              W=$(df -m "$GITHUB_WORKSPACE" | awk 'NR==2{print $4"M"}')
-              echo "[hb $(date +%T)] mem:$M swap:$S root_free:$R work_free:$W" >&3
-              sleep 45
-            done
-          }
-          hb &
-          HB=$!; trap 'kill $HB 2>/dev/null' EXIT
           # tolerate flag/version mismatch between this clang and a 4.14 tree
           export KCFLAGS="-Wno-unknown-warning-option -Wno-error"
           export KCPPFLAGS="-Wno-unknown-warning-option -Wno-error"
@@ -212,14 +198,15 @@ jobs:
         run: |
           # Always produce both files (even empty) so neither the artifact nor the release
           # upload can fail on a missing file.
-          cp "$GITHUB_WORKSPACE/build.log" "$GITHUB_WORKSPACE/build-full.log" 2>/dev/null || true
-          : > "$GITHUB_WORKSPACE/build-full.log.keep"; [ -f "$GITHUB_WORKSPACE/build-full.log" ] || : > "$GITHUB_WORKSPACE/build-full.log"
+          BL="${BUILD_LOG:-/mnt/build.log}"
+          cp "$BL" "$GITHUB_WORKSPACE/build-full.log" 2>/dev/null || true
+          [ -f "$GITHUB_WORKSPACE/build-full.log" ] || : > "$GITHUB_WORKSPACE/build-full.log"
           {
             echo "DEFCONFIG=${DEFCONFIG:-unknown}"
             echo "=== real compile errors (full log) ==="
-            grep -nE "error:|Error [0-9]|undefined reference|No rule to make|ld\.lld:|multiple definition|recipe for target" "$GITHUB_WORKSPACE/build.log" 2>/dev/null | grep -viE "note:|warning:" | tail -200
+            grep -nE "error:|Error [0-9]|undefined reference|No rule to make|ld\.lld:|multiple definition|recipe for target" "$BL" 2>/dev/null | grep -viE "note:|warning:" | tail -200
             echo "=== last 200 lines ==="
-            tail -n 200 "$GITHUB_WORKSPACE/build.log" 2>/dev/null
+            tail -n 200 "$BL" 2>/dev/null
           } > "$GITHUB_WORKSPACE/build-error.txt" || echo none > "$GITHUB_WORKSPACE/build-error.txt"
           echo "----- error head (also on console) -----"; head -60 "$GITHUB_WORKSPACE/build-error.txt"
 
@@ -251,10 +238,11 @@ jobs:
         if: failure()
         run: |
           cd "$GITHUB_WORKSPACE"
+          BL="${BUILD_LOG:-/mnt/build.log}"
           mkdir -p /tmp/lg
           cp pkg.log       /tmp/lg/pkg-${{ github.run_number }}.log   2>/dev/null || echo "no pkg.log" > /tmp/lg/pkg-${{ github.run_number }}.log
-          tail -n 300 build.log > /tmp/lg/build-tail-${{ github.run_number }}.log 2>/dev/null || true
-          grep -nE "error:|ld\.lld: error|undefined symbol|Error [0-9]|recipe for target|No rule to make" build.log 2>/dev/null \
+          tail -n 400 "$BL" > /tmp/lg/build-tail-${{ github.run_number }}.log 2>/dev/null || echo "no build log at $BL" > /tmp/lg/build-tail-${{ github.run_number }}.log
+          grep -nE "error:|ld\.lld: error|undefined symbol|Error [0-9]|recipe for target|No rule to make" "$BL" 2>/dev/null \
             | grep -viE "warning:|note:" | tail -120 > /tmp/lg/errors-${{ github.run_number }}.log 2>/dev/null || true
           git config user.email actions@github.com
           git config user.name ci
