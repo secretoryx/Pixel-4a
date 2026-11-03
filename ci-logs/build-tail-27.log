@@ -1,0 +1,400 @@
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0m3 warnings generated.
+  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/src/os_if_spectral_netlink.o
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/src/wlan_cfg80211_spectral.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:40:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0m  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_netlink.o
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/src/wlan_cfg80211_spectral.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/src/wlan_cfg80211_spectral.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0m3 warnings generated.
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/src/os_if_spectral_netlink.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/inc/os_if_spectral_netlink.h:24:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_pdev_obj.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_lock.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0m  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_phyerr.o
+  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral.o
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_netlink.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/osdep.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/src/os_if_spectral_netlink.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/inc/os_if_spectral_netlink.h:24:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_pdev_obj.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/src/os_if_spectral_netlink.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/os_if/linux/spectral/inc/os_if_spectral_netlink.h:24:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_pdev_obj.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0m3 warnings generated.
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_phyerr.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/osdep.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_netlink.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/osdep.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_defer.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_defer.h:31:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_netlink.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/osdep.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_defer.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_defer.h:31:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral.c:21:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/hif/inc/hif.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_util.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_util.h:36:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_netlink.c:22:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/hif/inc/hif.h:30:
+In file included from ../drivers/staging/qcacld-3.0/core/bmi/inc/ol_if_athvar.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/wmi/inc/wmi_unified_api.h:29:
+In file included from ../drivers/staging/qcacld-3.0/../fw-api/fw/wmi.h:45:
+[1m../drivers/staging/qcacld-3.0/../fw-api/fw/wmi_unified.h:25161:12: [0m[0;1;35mwarning: [0m[1mreturning 'char [16]' from a function with result type 'A_UINT8 *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+    return "Invalid WMI cmd";
+[0;1;32m           ^~~~~~~~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_netlink.c:249:36: [0m[0;1;35mwarning: [0m[1mpassing 'uint8_t [6]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        p_sops->get_mac_address(spectral, spec_samp_msg->macaddr);
+[0;1;32m                                          ^~~~~~~~~~~~~~~~~~~~~~
+[0m5 warnings generated.
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_phyerr.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/osdep.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_defer.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_defer.h:31:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_phyerr.c:20:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/osdep.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_defer.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_defer.h:31:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0m  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_sim.o
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral_phyerr.c:24:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/hif/inc/hif.h:30:
+In file included from ../drivers/staging/qcacld-3.0/core/bmi/inc/ol_if_athvar.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/wmi/inc/wmi_unified_api.h:29:
+In file included from ../drivers/staging/qcacld-3.0/../fw-api/fw/wmi.h:45:
+[1m../drivers/staging/qcacld-3.0/../fw-api/fw/wmi_unified.h:25161:12: [0m[0;1;35mwarning: [0m[1mreturning 'char [16]' from a function with result type 'A_UINT8 *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+    return "Invalid WMI cmd";
+[0;1;32m           ^~~~~~~~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral.c:21:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/hif/inc/hif.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral.c:21:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/hif/inc/hif.h:28:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral.c:21:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/hif/inc/hif.h:30:
+In file included from ../drivers/staging/qcacld-3.0/core/bmi/inc/ol_if_athvar.h:28:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/wmi/inc/wmi_unified_api.h:29:
+In file included from ../drivers/staging/qcacld-3.0/../fw-api/fw/wmi.h:45:
+[1m../drivers/staging/qcacld-3.0/../fw-api/fw/wmi_unified.h:25161:12: [0m[0;1;35mwarning: [0m[1mreturning 'char [16]' from a function with result type 'A_UINT8 *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+    return "Invalid WMI cmd";
+[0;1;32m           ^~~~~~~~~~~~~~~~~
+[0m  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/core/src/wlan_green_ap_main.o
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/spectral/target_if_spectral.c:2931:37: [0m[0;1;35mwarning: [0m[1mpassing 'uint8_t [6]' to parameter of type 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+                p_sops->get_mac_address(spectral, msg->macaddr);
+[0;1;32m                                                  ^~~~~~~~~~~~
+[0m4 warnings generated.
+  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_api.o
+5 warnings generated.
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/core/src/wlan_green_ap_main.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/core/src/wlan_green_ap_main_i.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_lock.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_api.c:22:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/inc/wlan_green_ap_api.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_lock.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/core/src/wlan_green_ap_main.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/core/src/wlan_green_ap_main_i.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/core/src/wlan_green_ap_main.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/core/src/wlan_green_ap_main_i.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0m3 warnings generated.
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_api.c:22:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/inc/wlan_green_ap_api.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_api.c:22:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/inc/wlan_green_ap_api.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0m3 warnings generated.
+  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_ucfg_api.o
+  CC      drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/src/target_if_green_ap.o
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_ucfg_api.c:24:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/inc/wlan_green_ap_ucfg_api.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_lock.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/src/target_if_green_ap.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/inc/target_if_green_ap.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_lock.h:27:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_types.h:35:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_types.h:62:
+In file included from ../include/linux/ipa.h:18:
+In file included from ../include/linux/ipv6.h:87:
+In file included from ../include/linux/tcp.h:23:
+In file included from ../include/net/sock.h:51:
+In file included from ../include/linux/netdevice.h:46:
+In file included from ../include/net/netprio_cgroup.h:17:
+In file included from ../include/linux/cgroup.h:27:
+[1m../include/linux/cgroup-defs.h:433:16: [0m[0;1;35mwarning: [0m[1mfield 'cgrp' with variable sized type 'struct cgroup' not at the end of a struct or class is a GNU extension [-Wgnu-variable-sized-type-not-at-end][0m
+        struct cgroup cgrp;
+[0;1;32m                      ^
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_ucfg_api.c:24:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/inc/wlan_green_ap_ucfg_api.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/src/wlan_green_ap_ucfg_api.c:24:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/green_ap/dispatcher/inc/wlan_green_ap_ucfg_api.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/src/target_if_green_ap.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/inc/target_if_green_ap.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:31:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:1882:9: [0m[0;1;35mwarning: [0m[1mreturning 'char *' from a function with result type 'uint8_t *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        return &skb->cb[8];
+[0;1;32m               ^~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/src/target_if_green_ap.c:23:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/inc/target_if_green_ap.h:25:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/umac/cmn_services/obj_mgr/inc/wlan_objmgr_cmn.h:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_list.h:43:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_trace.h:32:
+[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/inc/qdf_nbuf.h:881:2: [0m[0;1;35mwarning: [0m[1massigning to 'unsigned char *' from 'char *' converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+        __qdf_nbuf_frag_push_head(buf, frag_len, frag_vaddr, frag_paddr);
+[0;1;32m        ^                                        ~~~~~~~~~~
+[0m[1m../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/qdf/linux/src/i_qdf_nbuf.h:458:40: [0m[0;1;30mnote: [0mexpanded from macro '__qdf_nbuf_frag_push_head'[0m
+                QDF_NBUF_CB_TX_EXTRA_FRAG_VADDR(skb) = frag_vaddr;      \
+[0;1;32m                                                     ^ ~~~~~~~~~~
+[0mIn file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/green_ap/src/target_if_green_ap.c:26:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/target_if/core/inc/target_if.h:29:
+In file included from ../drivers/staging/qcacld-3.0/../qca-wifi-host-cmn/wmi/inc/wmi_unified_api.h:29:
+In file included from ../drivers/staging/qcacld-3.0/../fw-api/fw/wmi.h:45:
+[1m../drivers/staging/qcacld-3.0/../fw-api/fw/wmi_unified.h:25161:12: [0m[0;1;35mwarning: [0m[1mreturning 'char [16]' from a function with result type 'A_UINT8 *' (aka 'unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign][0m
+    return "Invalid WMI cmd";
+[0;1;32m           ^~~~~~~~~~~~~~~~~
+[0m3 warnings generated.
+4 warnings generated.
+  AR      drivers/staging/qcacld-3.0/wlan.o
+  AR      drivers/staging/qcacld-3.0/built-in.o
+  AR      drivers/staging/built-in.o
+  AR      drivers/built-in.o
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  AR      init/built-in.o
+  AR      built-in.o
+  LD      vmlinux.o
+  MODPOST vmlinux.o
+  KSYM    .tmp_kallsyms1.o
+aarch64-linux-gnu-nm: .tmp_vmlinux1: unknown type [0x13] section `.relr.dyn'
+  KSYM    .tmp_kallsyms2.o
+aarch64-linux-gnu-nm: .tmp_vmlinux2: unknown type [0x13] section `.relr.dyn'
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+aarch64-linux-gnu-nm: vmlinux: unknown type [0x13] section `.relr.dyn'
+aarch64-linux-gnu-nm: .tmp_vmlinux2: unknown type [0x13] section `.relr.dyn'
+  Building modules, stage 2.
+  OBJCOPY arch/arm64/boot/Image
+aarch64-linux-gnu-objcopy: vmlinux: unknown type [0x13] section `.relr.dyn'
+aarch64-linux-gnu-objcopy: Unable to recognise the format of the input file `vmlinux'
+make[2]: *** [../arch/arm64/boot/Makefile:46: arch/arm64/boot/Image] Error 1
+make[1]: *** [arch/arm64/Makefile:230: Image] Error 2
+make[1]: *** Waiting for unfinished jobs....
+  MODPOST 0 modules
+make[1]: Leaving directory '/home/runner/work/Pixel-4a/Pixel-4a/kernel/out'
+make: *** [Makefile:148: sub-make] Error 2

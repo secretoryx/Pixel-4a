@@ -1,0 +1,3 @@
+120962:make[2]: *** [../arch/arm64/boot/Makefile:46: arch/arm64/boot/Image] Error 1
+120963:make[1]: *** [arch/arm64/Makefile:230: Image] Error 2
+120967:make: *** [Makefile:148: sub-make] Error 2
