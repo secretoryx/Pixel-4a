@@ -138,7 +138,11 @@ jobs:
 
       - name: Package with AnyKernel3 (sunfish)
         run: |
-          git clone --depth=1 https://github.com/osm0sis/AnyKernel3 ak3
+          # Capture EVERYTHING this step does (with -x trace) to pkg.log, which a later step
+          # commits to the ci-logs branch so it is readable via raw.githubusercontent (no auth).
+          exec > >(tee "$GITHUB_WORKSPACE/pkg.log") 2>&1
+          set -x
+          git clone --depth=1 https://github.com/osm0sis/AnyKernel3 ak3 || true
           BOOT=kernel/out/arch/arm64/boot
           echo "=== full boot dir listing ==="; ls -la "$BOOT" || true
           # Pick the kernel image. NOTE: steps run with `set -e`, so a bare `[ -f x ] && ...`
@@ -237,3 +241,20 @@ jobs:
             build-error.txt
             build-full.log
           body: sunfish build error log (full)
+
+      - name: Publish logs to ci-logs branch (readable via raw, no auth)
+        if: failure()
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          mkdir -p /tmp/lg
+          cp pkg.log       /tmp/lg/pkg-${{ github.run_number }}.log   2>/dev/null || echo "no pkg.log" > /tmp/lg/pkg-${{ github.run_number }}.log
+          tail -n 300 build.log > /tmp/lg/build-tail-${{ github.run_number }}.log 2>/dev/null || true
+          git config user.email actions@github.com
+          git config user.name ci
+          git checkout --orphan ci-logs
+          git rm -rf --cached . >/dev/null 2>&1 || true
+          mkdir -p ci-logs
+          cp /tmp/lg/* ci-logs/ 2>/dev/null || true
+          git add -f ci-logs
+          git commit -m "ci logs run ${{ github.run_number }}" || true
+          git push -f origin ci-logs
