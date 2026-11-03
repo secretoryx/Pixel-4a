@@ -139,8 +139,21 @@ jobs:
       - name: Package with AnyKernel3 (sunfish)
         run: |
           git clone --depth=1 https://github.com/osm0sis/AnyKernel3 ak3
-          IMG="$(ls kernel/out/arch/arm64/boot/Image.lz4-dtb kernel/out/arch/arm64/boot/Image.gz-dtb kernel/out/arch/arm64/boot/Image-dtb kernel/out/arch/arm64/boot/Image.gz kernel/out/arch/arm64/boot/Image 2>/dev/null | head -1)"
-          echo "kernel image: $IMG"; test -n "$IMG"; cp "$IMG" ak3/
+          BOOT=kernel/out/arch/arm64/boot
+          echo "=== full boot dir listing ==="; ls -la "$BOOT" || true
+          # Pick the kernel image: prefer appended-dtb / compressed, but fall back to ANY Image*.
+          IMG=""
+          for cand in Image.gz-dtb Image.lz4-dtb Image-dtb Image.gz Image.lz4 Image; do
+            [ -f "$BOOT/$cand" ] && IMG="$BOOT/$cand" && break
+          done
+          [ -z "$IMG" ] && IMG="$(ls "$BOOT"/Image* 2>/dev/null | head -1)"
+          echo "selected kernel image: $IMG"
+          if [ -z "$IMG" ] || [ ! -f "$IMG" ]; then
+            echo "!! no kernel Image produced — build output missing"; ls -laR "$BOOT" || true; exit 1
+          fi
+          # Safety net: also stash the raw image so it can be published even if zip packaging trips.
+          cp "$IMG" "$GITHUB_WORKSPACE/$(basename "$IMG")"
+          cp "$IMG" ak3/
           cd ak3
           cat > anykernel.sh <<'AK'
           properties() { '
@@ -175,11 +188,14 @@ jobs:
         with:
           tag_name: sunfish-${{ github.run_number }}
           name: Advanced NetHunter kernel (Pixel 4a / sunfish) build ${{ github.run_number }}
-          files: NetHunter-Sunfish-*.zip
+          fail_on_unmatched_files: false
+          files: |
+            NetHunter-Sunfish-*.zip
+            Image*
           body: |
             Flashable AnyKernel zip for Pixel 4a (sunfish), Android 13.
-            Tier built: ${{ env.TIER }}
-            Flash via Franco Kernel Manager, then install the FULL Kali chroot.
+            Config: ${{ env.TIER }}  (already contains MAC80211 + all USB Wi-Fi injection drivers)
+            Flash the .zip via Franco Kernel Manager. The raw Image* is a fallback.
 
       - name: Publish ERROR LOG on failure
         if: failure()
